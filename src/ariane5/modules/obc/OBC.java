@@ -1,6 +1,7 @@
 package ariane5.modules.obc;
 
 import ariane5.core.EventBus;
+import ariane5.domain.command.FlightCommand;
 import ariane5.domain.enums.TipoTransmissao;
 import ariane5.domain.model.AtuadorMotor;
 import ariane5.domain.model.AutoDestruicao;
@@ -62,8 +63,8 @@ public class OBC {
         return pacote != null && pacote.isValido() && pacote.getCoordenadas() != null;
     }
 
-    public ComandoTrajetoria emitirComandoTrajetoria(PacoteNavegacao pacote) {
-        ComandoTrajetoria comando = new ComandoTrajetoria(
+    public FlightCommand emitirComandoTrajetoria(PacoteNavegacao pacote) {
+        FlightCommand comando = new ComandoTrajetoria(
                 LocalDateTime.now(),
                 "CORRECAO_FINA",
                 0.42,
