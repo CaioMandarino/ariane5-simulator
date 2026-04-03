@@ -1,73 +1,73 @@
 # Ariane 5 Simulator
 
-Simulacao em Java inspirada no incidente do Ariane 5, com foco em arquitetura, modularidade e boas praticas. O projeto implementa os componentes do diagrama em modulos como `OBC`, `SRI`, sensores, telemetria, seguranca e base de controle em solo.
+Simulação em Java inspirada no incidente do Ariane 5, com foco em arquitetura, modularidade e boas práticas. O projeto implementa os componentes do diagrama em módulos como `OBC`, `SRI`, sensores, telemetria, segurança e base de controle em solo.
 
 ## Arquitetura escolhida
 
-Foi utilizada **Arquitetura Hibrida**.
+Foi utilizada **Arquitetura Híbrida**.
 
-### Por que nao Microservices?
+### Por que não Microservices?
 
-Microservices nao sao a melhor escolha para um software embarcado critico, porque adicionariam complexidade de rede, latencia e distribuicao onde o objetivo principal e responder localmente com previsibilidade.
+Microservices não são a melhor escolha para um software embarcado crítico, porque adicionariam complexidade de rede, latência e distribuição onde o objetivo principal é responder localmente com previsibilidade.
 
-### Por que nao Client-server?
+### Por que não Client-server?
 
-Client-server cobre bem a comunicacao com a base em solo, mas nao organiza de forma adequada os subsistemas internos do foguete, que precisam cooperar em tempo real dentro do mesmo processo.
+Client-server cobre bem a comunicação com a base em solo, mas não organiza de forma adequada os subsistemas internos do foguete, que precisam cooperar em tempo real dentro do mesmo processo.
 
-### Por que nao somente Event-driven?
+### Por que não somente Event-driven?
 
-Eventos sao muito uteis para desacoplamento, porem so eles nao bastam para estruturar responsabilidades tecnicas como navegacao, seguranca, controle e telemetria.
+Eventos são muito úteis para desacoplamento, porém só eles não bastam para estruturar responsabilidades técnicas como navegação, segurança, controle e telemetria.
 
-### Por que Arquitetura Hibrida?
+### Por que Arquitetura Híbrida?
 
-A solucao combina:
+A solução combina:
 
-- **modularizacao em camadas**, para separar dominio, interfaces, modulos e orquestracao;
-- **fluxo orientado a eventos**, para telemetria, diagnosticos e falhas;
-- **comunicacao estilo client-server**, limitada ao envio de transmissao para a base em solo.
+- **modularização em camadas**, para separar domínio, interfaces, módulos e orquestração;
+- **fluxo orientado a eventos**, para telemetria, diagnósticos e falhas;
+- **comunicação estilo client-server**, limitada ao envio de transmissão para a base em solo.
 
-Assim o projeto fica mais proximo de um sistema embarcado real: coeso, local, tolerante a falhas e facil de evoluir.
+Assim o projeto fica mais próximo de um sistema embarcado real: coeso, local, tolerante a falhas e fácil de evoluir.
 
 ## Design patterns utilizados
 
 ### 1. Strategy
 
-Aplicado em `SoftwareNavegacao` e no tratamento de excecoes do `SRI`.
+Aplicado em `SoftwareNavegacao` e no tratamento de exceções do `SRI`.
 
-- Permite alternar algoritmos por modelo de parametros (`ARIANE_4` e `ARIANE_5`);
+- Permite alternar algoritmos por modelo de parâmetros (`ARIANE_4` e `ARIANE_5`);
 - evita condicionais gigantes espalhadas pelo sistema;
-- facilita simular o erro historico de reutilizacao inadequada de parametros.
+- facilita simular o erro histórico de reutilização inadequada de parâmetros.
 
 ### 2. Observer / Event Bus
 
 Aplicado em `SimpleEventBus`.
 
-- Modulos publicam eventos sem conhecer diretamente seus consumidores;
-- `SRI`, `OBC`, solo e diagnostico ficam desacoplados;
-- deixa o codigo mais modular e aderente a um sistema com telemetria e falhas.
+- Módulos publicam eventos sem conhecer diretamente seus consumidores;
+- `SRI`, `OBC`, solo e diagnóstico ficam desacoplados;
+- deixa o código mais modular e aderente a um sistema com telemetria e falhas.
 
 ### 3. Command
 
 Aplicado em `ComandoTrajetoria`.
 
-- Cada comando de correcao encapsula a intencao de atuacao;
+- Cada comando de correção encapsula a intenção de atuação;
 - o `OBC` decide o que emitir e o `AtuadorMotor` executa;
-- melhora extensibilidade para novos tipos de correcoes.
+- melhora extensibilidade para novos tipos de correções.
 
 ### 4. Facade
 
 Aplicado em `Ariane5LaunchSimulation`.
 
-- Centraliza a montagem da simulacao;
-- simplifica a execucao do fluxo principal;
-- esconde a complexidade de inicializacao dos subsistemas.
+- Centraliza a montagem da simulação;
+- simplifica a execução do fluxo principal;
+- esconde a complexidade de inicialização dos subsistemas.
 
 ### 5. Factory
 
 Aplicado em `NavigationAlgorithmFactory`.
 
-- Cria a estrategia correta de navegacao conforme o modelo configurado;
-- reforca o principio de responsabilidade unica.
+- Cria a estratégia correta de navegação conforme o modelo configurado;
+- reforça o princípio de responsabilidade única.
 
 ## Estrutura
 
@@ -77,14 +77,14 @@ src/ariane5
   bus/                -> barramento de eventos
   core/               -> contratos centrais
   domain/             -> entidades, enums e eventos
-  interfaces/         -> contratos entre modulos
+  interfaces/         -> contratos entre módulos
   modules/
     telemetry/        -> sensores e coleta
-    navigation/       -> software de navegacao
-    safety/           -> SRI e politicas de falha
+    navigation/       -> software de navegação
+    safety/           -> SRI e políticas de falha
     obc/              -> computador de bordo
-    ground/           -> transmissao para o solo
-  simulation/         -> orquestracao da simulacao
+    ground/           -> transmissão para o solo
+  simulation/         -> orquestração da simulação
 ```
 
 ## Como executar
@@ -104,9 +104,9 @@ java -cp out ariane5.app.Main
 ## O que a simulacao demonstra
 
 - leitura mockada de sensores;
-- geracao e validacao de telemetria;
+- geração e validação de telemetria;
 - processamento redundante em dois SRIs;
 - erro de overflow ao usar parametros incompativeis;
 - entrada do `OBC` em modo seguro;
-- envio de diagnosticos e transmissao para a base em solo;
-- armamento do modulo de autodestruicao quando nao ha pacote valido.
+- envio de diagnósticos e transmissão para a base em solo;
+- armamento do módulo de autodestruição quando não há pacote válido.
